@@ -21,13 +21,16 @@ def image_url(movie, cover_type):
 
     Radarr returns images as a list of {coverType, url, remoteUrl} in no
     guaranteed order, so they must be selected by coverType rather than by
-    position. remoteUrl is preferred: it is the TMDB CDN address and works from
-    a browser that cannot reach the Radarr host, which is the common case for a
-    Home Assistant dashboard viewed away from home.
+    position. Only remoteUrl is usable: it is the TMDB CDN address and works
+    from any browser. The `url` field is a relative /MediaCover/... path on
+    the Radarr host, and Upcoming Media Card prefixes a relative path with the
+    Home Assistant base URL, so it would only ever load when Radarr is proxied
+    under the same hostname as Home Assistant. No image is better than a
+    broken one.
     """
     for image in movie.get('images') or []:
         if image.get('coverType') == cover_type:
-            return image.get('remoteUrl') or image.get('url') or ''
+            return image.get('remoteUrl') or ''
     return ''
 
 
